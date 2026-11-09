@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Research Resource Manager{% endblock %} | USV</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-container">
+            <a href="/" class="site-title">USV | Research Resource Manager</a>
+            <nav class="site-nav" aria-label="Navigare principala">
+                <a href="/" class="nav-link">Acasă</a>
+                {% block nav_extra %}{% endblock %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-group" role="status">
+                    {% for category, message in messages %}
+                        <p class="alert-box alert-{{ category }}">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <p>Universitatea „Ștefan cel Mare" din Suceava — Research Resource Manager</p>
+    </footer>
+</body>
+</html>

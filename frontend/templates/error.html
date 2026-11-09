@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Eroare {{ code }}{% endblock %}
+
+{% block content %}
+<section class="card-section">
+    <h1 class="section-title">Eroare {{ code }}</h1>
+    <p class="empty-message">{{ message }}</p>
+    <p><a class="btn-primary" href="/">Înapoi la pagina principală</a></p>
+</section>
+{% endblock %}
