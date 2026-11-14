@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Săli de cercetare{% endblock %}
+{% block page_title %}Săli și stații de cercetare{% endblock %}
+{% block page_subtitle %}17 săli configurabile · 16 stații de lucru per sală{% endblock %}
+
+{% block content %}
+<div class="grid">
+  {% for room in rooms %}
+    <div class="res-card">
+      <div class="top">
+        <h4>🏛️ {{ room.name }}</h4>
+        {% if room.status == 'disponibila' %}
+          <span class="badge b-ok">Disponibil</span>
+        {% else %}
+          <span class="badge b-bad">Mentenanță</span>
+        {% endif %}
+      </div>
+      <div class="muted" style="font-size:12.5px;">Sală · {{ room.stations_count }} stații rezervabile individual</div>
+      <div class="muted" style="font-size:12px;">Orar: {{ room.schedule }}</div>
+      <div class="res-actions">
+        {% if room.status == 'disponibila' %}
+          <a href="{{ url_for('new_booking', resource_type='room', resource_id=room.id) }}" class="btn btn-gold" style="flex:1;">Rezervă</a>
+        {% else %}
+          <span class="btn btn-gold btn-disabled" style="flex:1;">Indisponibil</span>
+        {% endif %}
+        <a href="{{ url_for('room_detail', room_id=room.id) }}" class="btn btn-ghost">Detalii (16 stații)</a>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
