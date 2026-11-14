@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block page_subtitle %}Calendar centralizat · disponibilitate în timp real{% endblock %}
+
+{% block content %}
+<div class="stats">
+  <div class="stat">
+    <div class="k">Săli configurabile</div>
+    <div class="v">{{ stats.rooms }} <small>· orar propriu, reguli</small></div>
+  </div>
+  <div class="stat">
+    <div class="k">Stații de lucru</div>
+    <div class="v">{{ stats.stations }} <small>· 16 / sală</small></div>
+  </div>
+  <div class="stat">
+    <div class="k">Echipamente</div>
+    <div class="v">{{ stats.equipment }} <small>· 6 categorii</small></div>
+  </div>
+  <div class="stat">
+    <div class="k">Cereri în așteptare</div>
+    <div class="v">{{ stats.pending }} <small>· verificare automată</small></div>
+  </div>
+</div>
+
+<div class="dash-grid">
+  <div class="card">
+    <div class="res-card top" style="border:none;padding:0;margin-bottom:10px;">
+      <h3>📅 Calendar săptămânal — {{ selected_room.name if selected_room else 'Sala C201' }}</h3>
+      <form method="get" action="{{ url_for('dashboard') }}">
+        <select name="room_id" class="field" style="margin:0;padding:6px 10px;border-radius:8px;background:var(--panel-2);color:var(--text);border:1px solid var(--line);" onchange="this.form.submit()">
+          {% for r in rooms %}
+            <option value="{{ r.id }}" {% if selected_room and r.id == selected_room.id %}selected{% endif %}>{{ r.name }}</option>
+          {% endfor %}
+        </select>
+      </form>
+    </div>
+    <div class="muted" style="font-size:12.5px;margin-bottom:10px;">● rezervat &nbsp; – liber &nbsp;·&nbsp; intervale de 2h, 08:00–20:00</div>
+    <table class="cal">
+      <tr>
+        <th>Interval</th>
+        {% for d in calendar_grid.days %}
+          <th>{{ d }}</th>
+        {% endfor %}
+      </tr>
+      {% for row in calendar_grid.rows %}
+        <tr>
+          <td class="muted" style="padding:4px 8px;">{{ row.hour }}</td>
+          {% for busy in row.slots %}
+            <td><div class="slot {% if busy %}busy{% endif %}">{{ '●' if busy else '–' }}</div></td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>⚡ Rezervările mele active</h3>
+    {% if active_bookings %}
+      {% for b in active_bookings %}
+        <div class="notif-item">
+          <div class="dot"></div>
+          <div>
+            <div class="t">{{ b.code }} · {{ b.resource_type|upper }} #{{ b.resource_id }}</div>
+            <div class="m">{{ b.start_time }} → {{ b.end_time }} ({{ b.booking_type }})</div>
+          </div>
+          <div style="margin-left:auto;">
+            {% if b.status == 'confirmed' %}
+              <span class="badge b-ok">Confirmată</span>
+            {% else %}
+              <span class="badge b-warn">În așteptare</span>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty">Nu ai rezervări active.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
