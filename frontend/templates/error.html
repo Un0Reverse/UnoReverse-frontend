@@ -1,11 +1,22 @@
-{% extends "base.html" %}
-
-{% block title %}Eroare {{ code }}{% endblock %}
-
-{% block content %}
-<section class="card-section">
-    <h1 class="section-title">Eroare {{ code }}</h1>
-    <p class="empty-message">{{ message }}</p>
-    <p><a class="btn-primary" href="/">Înapoi la pagina principală</a></p>
-</section>
-{% endblock %}
+<!doctype html>
+<html lang="ro" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eroare {{ code }} – RRM USV</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
+  </head>
+  <body>
+    <div class="login-screen">
+      <div class="login-card">
+        <div class="logo">
+          <div class="logo-badge">{{ code }}</div>
+          <h1>Eroare {{ code }}<small>Research Resource Manager USV</small></h1>
+        </div>
+        <p class="sub">{{ message }}</p>
+        <a href="/" class="btn btn-primary btn-full">Înapoi la pagina principală</a>
+      </div>
+    </div>
+  </body>
+</html>
