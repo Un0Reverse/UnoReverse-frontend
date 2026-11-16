@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{{ room.name }}{% endblock %}
+{% block page_title %}{{ room.name }}{% endblock %}
+{% block page_subtitle %}Orar: {{ room.schedule }} · {{ room.stations_count }} stații de lucru{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="res-card top" style="border:none;padding:0;">
+    <div>
+      <h3>Rezervare sală întreagă</h3>
+      <p class="muted" style="font-size:13px;">Rezervarea sălii întregi blochează automat toate cele 16 stații pe intervalul ales.</p>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      {% if room.status == 'disponibila' %}
+        <span class="badge b-ok">Disponibilă</span>
+        <a href="{{ url_for('new_booking', resource_type='room', resource_id=room.id) }}" class="btn btn-gold">Rezervă sala întreagă</a>
+      {% else %}
+        <span class="badge b-bad">Mentenanță</span>
+      {% endif %}
+      <a href="{{ url_for('resources_catalog') }}" class="btn btn-ghost">Înapoi</a>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>🖥️ Stații individuale (1 – 16)</h3>
+  <div class="stations-grid">
+    {% for st in stations %}
+      <div class="station-box">
+        <div class="res-card top" style="border:none;padding:0;">
+          <strong>{{ st.label }}</strong>
+          {% if st.status == 'disponibila' and room.status == 'disponibila' %}
+            <span class="badge b-ok">Liberă</span>
+          {% else %}
+            <span class="badge b-bad">Mentenanță</span>
+          {% endif %}
+        </div>
+        {% if st.status == 'disponibila' and room.status == 'disponibila' %}
+          <a href="{{ url_for('new_booking', resource_type='station', resource_id=st.id) }}" class="btn btn-primary btn-full">Rezervă stația</a>
+        {% else %}
+          <span class="btn btn-ghost btn-full btn-disabled">Indisponibilă</span>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
