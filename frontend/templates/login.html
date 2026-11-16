@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ro" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Autentificare USV – Research Resource Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
+  </head>
+  <body>
+    <div class="login-screen">
+      <div class="login-card">
+        <div class="logo">
+          <div class="logo-badge">RRM</div>
+          <h1>Research Resource Manager<small>Universitatea „Ștefan cel Mare” Suceava</small></h1>
+        </div>
+        <p class="sub">
+          Autentificare exclusivă cu cont instituțional USV. Acces permis strict studenților și cadrelor cu email USV.
+        </p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-list">
+              {% for category, message in messages %}
+                <div class="flash-msg {{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <form method="post" action="{{ url_for('login') }}">
+          <div class="field">
+            <label for="email">Email USV</label>
+            <input id="email" name="email" type="email" value="{{ email or '' }}"
+                   placeholder="prenume.nume@student.usv.ro" required />
+          </div>
+          <div class="field">
+            <label for="password">Parolă cont USV</label>
+            <input id="password" name="password" type="password" placeholder="••••••••" required />
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">Conectare cu cont USV</button>
+        </form>
+
+        <div class="demo-logins">
+          <h4>Demonstrație rapidă</h4>
+          <div class="row">
+            <form method="post" action="{{ url_for('demo_login', role='student') }}">
+              <button type="submit" class="chip-btn">👤 Student</button>
+            </form>
+            <form method="post" action="{{ url_for('demo_login', role='cadru') }}">
+              <button type="submit" class="chip-btn">🎓 Cadru USV</button>
+            </form>
+            <form method="post" action="{{ url_for('demo_login', role='admin') }}">
+              <button type="submit" class="chip-btn">🛡️ Administrator</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

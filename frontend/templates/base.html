@@ -1,38 +1,81 @@
-<!DOCTYPE html>
-<html lang="ro">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Research Resource Manager{% endblock %} | USV</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-    <header class="site-header">
-        <div class="header-container">
-            <a href="/" class="site-title">USV | Research Resource Manager</a>
-            <nav class="site-nav" aria-label="Navigare principala">
-                <a href="/" class="nav-link">Acasă</a>
-                {% block nav_extra %}{% endblock %}
-            </nav>
+<!doctype html>
+<html lang="ro" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Dashboard{% endblock %} – Research Resource Manager USV</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="logo">
+          <div class="logo-badge">RRM</div>
+          <h1>Research Resource Manager<small>USV · Suceava</small></h1>
         </div>
-    </header>
 
-    <main class="main-container">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="flash-group" role="status">
-                    {% for category, message in messages %}
-                        <p class="alert-box alert-{{ category }}">{{ message }}</p>
-                    {% endfor %}
-                </div>
+        <nav aria-label="Meniu principal">
+          <a href="{{ url_for('dashboard') }}" class="nav-item {% if active_nav == 'dashboard' %}active{% endif %}">
+            <span class="ico">◫</span> Dashboard
+          </a>
+          <a href="{{ url_for('resources_catalog') }}" class="nav-item {% if active_nav == 'cautare' %}active{% endif %}">
+            <span class="ico">🔍</span> Săli, stații & echipamente
+          </a>
+          <a href="{{ url_for('my_bookings') }}" class="nav-item {% if active_nav == 'rezervari' %}active{% endif %}">
+            <span class="ico">📅</span> Rezervările mele
+          </a>
+          <a href="{{ url_for('notifications_list') }}" class="nav-item {% if active_nav == 'notificari' %}active{% endif %}">
+            <span class="ico">🔔</span> Notificări
+            {% if unread_count > 0 %}
+              <span class="nav-pill">{{ unread_count }}</span>
             {% endif %}
+          </a>
+          {% if current_user and current_user.role == 'admin' %}
+            <a href="{{ url_for('admin_approvals') }}" class="nav-item {% if active_nav == 'admin' %}active{% endif %}">
+              <span class="ico">🛡️</span> Panou administrator
+            </a>
+          {% endif %}
+        </nav>
+
+        <div class="nav-sep"></div>
+        <a href="{{ url_for('logout') }}" class="nav-item">
+          <span class="ico">⎋</span> Deconectare
+        </a>
+      </aside>
+
+      <main class="main-area">
+        <header class="topbar">
+          <div>
+            <h2>{% block page_title %}Dashboard{% endblock %}</h2>
+            <div class="sub">{% block page_subtitle %}Calendar centralizat · disponibilitate în timp real{% endblock %}</div>
+          </div>
+          <div class="top-actions">
+            {% if current_user %}
+              <div class="user-pill">
+                <strong>{{ current_user.name }}</strong> ·
+                {% if current_user.role == 'admin' %}Administrator{% elif current_user.role == 'cadru' %}Cadru USV{% else %}Student{% endif %}
+              </div>
+            {% endif %}
+            <button type="button" class="icon-btn" id="theme-btn" title="Comută Dark / Light">🌙</button>
+            <div class="avatar">
+              {% if current_user %}{{ current_user.name[:2]|upper }}{% else %}USV{% endif %}
+            </div>
+          </div>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-list" role="status">
+              {% for category, message in messages %}
+                <div class="flash-msg {{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
         {% endwith %}
 
         {% block content %}{% endblock %}
-    </main>
-
-    <footer class="site-footer">
-        <p>Universitatea „Ștefan cel Mare" din Suceava — Research Resource Manager</p>
-    </footer>
-</body>
+      </main>
+    </div>
+  </body>
 </html>
