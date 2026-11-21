@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Panou administrator – Rapoarte{% endblock %}
+{% block page_title %}Panou administrator{% endblock %}
+{% block page_subtitle %}Aprobări, resurse și rapoarte de ocupare{% endblock %}
+
+{% block content %}
+<div class="tabs">
+  <a href="{{ url_for('admin_approvals') }}" class="tab">Aprobări</a>
+  <a href="{{ url_for('admin_reports') }}" class="tab active">Rapoarte ocupare</a>
+  <a href="{{ url_for('admin_resources') }}" class="tab">Resurse</a>
+</div>
+
+<div class="card">
+  <h3>Grad de ocupare — 17 săli de cercetare USV</h3>
+  {% for item in occupancy %}
+    <div class="bar-wrap">
+      <div class="lbl">
+        <span>{{ item.name }} ({{ item.bookings }} rezervări confirmate)</span>
+        <span>{{ item.percent }}%</span>
+      </div>
+      <div class="bar">
+        <div style="width: {{ item.percent }}%;"></div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
