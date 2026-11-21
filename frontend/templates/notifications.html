@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Notificări{% endblock %}
+{% block page_title %}Notificări{% endblock %}
+{% block page_subtitle %}Alerte in-app (sincronizate cu emailul instituțional USV){% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="res-card top" style="border:none;padding:0;margin-bottom:12px;">
+    <h3>Centru de notificări</h3>
+    {% if notifications %}
+      <form method="post" action="{{ url_for('mark_notifications_read') }}">
+        <button type="submit" class="btn btn-ghost">Marchează toate ca citite</button>
+      </form>
+    {% endif %}
+  </div>
+
+  {% if notifications %}
+    {% for n in notifications %}
+      <div class="notif-item {% if n.is_read %}read{% endif %}">
+        <div class="dot"></div>
+        <div>
+          <div class="t">{{ n.title }}</div>
+          <div class="m">{{ n.message }}</div>
+        </div>
+        <div class="time">{{ n.created_at }}</div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty">Nu ai notificări noi.</div>
+  {% endif %}
+</div>
+{% endblock %}
