@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Săli, stații & echipamente{% endblock %}
+{% block page_title %}Săli, stații & echipamente{% endblock %}
+{% block page_subtitle %}Caută și filtrează resursele de cercetare USV{% endblock %}
+
+{% block content %}
+<form method="get" action="{{ url_for('resources_catalog') }}" class="filters">
+  <select name="type" onchange="this.form.submit()">
+    <option value="toate" {% if selected_type == 'toate' %}selected{% endif %}>Toate resursele</option>
+    <option value="sali" {% if selected_type == 'sali' %}selected{% endif %}>Săli & stații</option>
+    <option value="echipamente" {% if selected_type == 'echipamente' %}selected{% endif %}>Echipamente</option>
+  </select>
+
+  <select name="category" onchange="this.form.submit()">
+    <option value="0">Toate categoriile</option>
+    {% for cat in categories %}
+      <option value="{{ cat.id }}" {% if selected_cat == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+    {% endfor %}
+  </select>
+
+  <select name="status" onchange="this.form.submit()">
+    <option value="toate" {% if selected_status == 'toate' %}selected{% endif %}>Orice status</option>
+    <option value="disponibil" {% if selected_status == 'disponibil' %}selected{% endif %}>Disponibil</option>
+    <option value="ocupat" {% if selected_status == 'ocupat' %}selected{% endif %}>Ocupat</option>
+    <option value="mentenanta" {% if selected_status == 'mentenanta' %}selected{% endif %}>Mentenanță</option>
+  </select>
+
+  <button type="submit" class="btn btn-primary">Filtrează</button>
+</form>
+
+{% if rooms or equipment_list %}
+  <div class="grid">
+    {% for room in rooms %}
+      <div class="res-card">
+        <div class="top">
+          <h4>🏛️ {{ room.name }}</h4>
+          {% if room.status == 'disponibila' %}
+            <span class="badge b-ok">Disponibil</span>
+          {% else %}
+            <span class="badge b-bad">Mentenanță</span>
+          {% endif %}
+        </div>
+        <div class="muted" style="font-size:12.5px;">Sală · {{ room.stations_count }} stații rezervabile individual</div>
+        <div class="muted" style="font-size:12px;">Orar: {{ room.schedule }}</div>
+        <div class="res-actions">
+          {% if room.status == 'disponibila' %}
+            <a href="{{ url_for('new_booking', resource_type='room', resource_id=room.id) }}" class="btn btn-gold" style="flex:1;">Rezervă</a>
+          {% else %}
+            <span class="btn btn-gold btn-disabled" style="flex:1;">Rezervă</span>
+          {% endif %}
+          <a href="{{ url_for('room_detail', room_id=room.id) }}" class="btn btn-ghost">Detalii</a>
+        </div>
+      </div>
+    {% endfor %}
+
+    {% for eq in equipment_list %}
+      <div class="res-card">
+        <div class="top">
+          <h4>🔬 {{ eq.name }}</h4>
+          {% if eq.status == 'disponibil' %}
+            <span class="badge b-ok">Disponibil</span>
+          {% elif eq.status == 'ocupat' %}
+            <span class="badge b-warn">Ocupat</span>
+          {% else %}
+            <span class="badge b-bad">Mentenanță</span>
+          {% endif %}
+        </div>
+        <div class="muted" style="font-size:12.5px;">
+          {{ eq.category_name }} · {{ 'fixat în ' + eq.room_name if eq.room_name else 'mobil' }}
+        </div>
+        <div class="res-actions">
+          {% if eq.status == 'disponibil' %}
+            <a href="{{ url_for('new_booking', resource_type='equipment', resource_id=eq.id) }}" class="btn btn-gold" style="flex:1;">Rezervă</a>
+          {% else %}
+            <span class="btn btn-gold btn-disabled" style="flex:1;">Rezervă</span>
+          {% endif %}
+          <a href="{{ url_for('room_detail', room_id=eq.room_id) if eq.room_id else '#' }}" class="btn btn-ghost {% if not eq.room_id %}btn-disabled{% endif %}">Sală</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="card"><div class="empty">Nicio resursă nu corespunde filtrelor selectate.</div></div>
+{% endif %}
+{% endblock %}
