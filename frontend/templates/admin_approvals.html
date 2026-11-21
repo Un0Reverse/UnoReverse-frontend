@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Panou administrator – Aprobări{% endblock %}
+{% block page_title %}Panou administrator{% endblock %}
+{% block page_subtitle %}Aprobări, resurse și rapoarte de ocupare{% endblock %}
+
+{% block content %}
+<div class="tabs">
+  <a href="{{ url_for('admin_approvals') }}" class="tab active">Aprobări</a>
+  <a href="{{ url_for('admin_reports') }}" class="tab">Rapoarte ocupare</a>
+  <a href="{{ url_for('admin_resources') }}" class="tab">Resurse</a>
+</div>
+
+<div class="card">
+  <h3>
+    Cereri în așteptare
+    <span class="muted" style="font-weight:400;font-size:12.5px;">· termen de expirare: 48h · prioritizare: Cadru USV &gt; Student</span>
+  </h3>
+  {% if pending %}
+    {% for r in pending %}
+      <div class="notif-item">
+        <div class="dot"></div>
+        <div>
+          <div class="t">{{ r.code }} · {{ r.resource_name }}</div>
+          <div class="m">
+            {{ r.user_name }} ({{ 'Cadru didactic' if r.user_role == 'cadru' else 'Student' }}) · {{ r.start_time }} → {{ r.end_time }}
+          </div>
+        </div>
+        <div class="approve-row">
+          <form method="post" action="{{ url_for('process_approval', booking_id=r.id, action='approve') }}">
+            <button type="submit" class="btn btn-gold" style="padding:7px 14px;">Aprobă</button>
+          </form>
+          <form method="post" action="{{ url_for('process_approval', booking_id=r.id, action='reject') }}">
+            <button type="submit" class="btn-danger">Respinge</button>
+          </form>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty">Nu există cereri în așteptare. 🎉</div>
+  {% endif %}
+</div>
+{% endblock %}
