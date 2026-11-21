@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Panou administrator – Resurse{% endblock %}
+{% block page_title %}Panou administrator{% endblock %}
+{% block page_subtitle %}Aprobări, resurse și rapoarte de ocupare{% endblock %}
+
+{% block content %}
+<div class="tabs">
+  <a href="{{ url_for('admin_approvals') }}" class="tab">Aprobări</a>
+  <a href="{{ url_for('admin_reports') }}" class="tab">Rapoarte ocupare</a>
+  <a href="{{ url_for('admin_resources') }}" class="tab active">Resurse</a>
+</div>
+
+<div class="card">
+  <h3>Reguli sistem (expirare cereri în așteptare)</h3>
+  <form method="post" action="{{ url_for('update_admin_settings') }}" class="filters" style="margin-bottom:0;">
+    <label for="pending_expiry_hours" class="muted" style="font-size:13px;">Termen expirare cereri neaprobate (ore):</label>
+    <input type="number" id="pending_expiry_hours" name="pending_expiry_hours" value="{{ expiry_hours }}" min="1" max="168" style="width:100px;" />
+    <button type="submit" class="btn btn-primary">Salvează regula</button>
+  </form>
+</div>
+
+<div class="card">
+  <h3>Gestionare resurse — status și mentenanță</h3>
+  <table class="data">
+    <thead>
+      <tr>
+        <th>Resursă</th>
+        <th>Tip / Categorie</th>
+        <th>Status</th>
+        <th>Acțiune</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rooms %}
+        <tr>
+          <td>{{ r.name }}</td>
+          <td>Sală ({{ r.stations_count }} stații)</td>
+          <td>
+            {% if r.status == 'disponibila' %}
+              <span class="badge b-ok">Disponibil</span>
+            {% else %}
+              <span class="badge b-bad">Mentenanță</span>
+            {% endif %}
+          </td>
+          <td>
+            <form method="post" action="{{ url_for('toggle_resource_maintenance', res_type='room', res_id=r.id) }}">
+              <button type="submit" class="btn-danger">
+                {{ 'Redă disponibilitatea' if r.status == 'mentenanta' else 'Trimite în mentenanță' }}
+              </button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+
+      {% for eq in equipment_list %}
+        <tr>
+          <td>{{ eq.name }}</td>
+          <td>{{ eq.category_name }}</td>
+          <td>
+            {% if eq.status == 'disponibil' %}
+              <span class="badge b-ok">Disponibil</span>
+            {% elif eq.status == 'ocupat' %}
+              <span class="badge b-warn">Ocupat</span>
+            {% else %}
+              <span class="badge b-bad">Mentenanță</span>
+            {% endif %}
+          </td>
+          <td>
+            <form method="post" action="{{ url_for('toggle_resource_maintenance', res_type='equipment', res_id=eq.id) }}">
+              <button type="submit" class="btn-danger">
+                {{ 'Redă disponibilitatea' if eq.status == 'mentenanta' else 'Trimite în mentenanță' }}
+              </button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
