@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Rezervările mele{% endblock %}
+{% block page_title %}Rezervările mele{% endblock %}
+{% block page_subtitle %}Istoric, statusuri și anulare{% endblock %}
+
+{% block content %}
+<div class="card">
+  {% if bookings %}
+    <table class="data">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Resursă</th>
+          <th>Tip</th>
+          <th>Interval</th>
+          <th>Status</th>
+          <th>Acțiune</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in bookings %}
+          <tr>
+            <td><strong>{{ b.code }}</strong></td>
+            <td>{{ b.resource_name }}</td>
+            <td>{{ 'Orară' if b.booking_type == 'orara' else '1 zi' }}</td>
+            <td>{{ b.start_time }} → {{ b.end_time }}</td>
+            <td>
+              {% if b.status == 'confirmed' %}
+                <span class="badge b-ok">Confirmată</span>
+              {% elif b.status == 'pending' %}
+                <span class="badge b-warn">În așteptare</span>
+              {% elif b.status == 'rejected' %}
+                <span class="badge b-bad">Respinsă</span>
+              {% elif b.status == 'expired' %}
+                <span class="badge b-bad">Expirată</span>
+              {% else %}
+                <span class="badge b-gray">Anulată</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if b.status in ('pending', 'confirmed') %}
+                <form method="post" action="{{ url_for('cancel_booking', booking_id=b.id) }}">
+                  <button type="submit" class="btn-danger">Anulează</button>
+                </form>
+              {% else %}
+                <span class="muted" style="font-size:12px;">—</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="empty">Nu ai nicio rezervare. Caută o resursă și trimite o cerere.</div>
+  {% endif %}
+</div>
+{% endblock %}

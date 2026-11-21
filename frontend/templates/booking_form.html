@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Rezervare nouă{% endblock %}
+{% block page_title %}Rezervare — {{ resource_name }}{% endblock %}
+{% block page_subtitle %}Verificarea disponibilității se face automat la trimitere (prevenirea suprapunerilor){% endblock %}
+
+{% block content %}
+<div class="card form-card">
+  <h3>Completează detaliile rezervării</h3>
+  <form method="post" action="{{ url_for('new_booking') }}">
+    <input type="hidden" name="resource_type" value="{{ resource_type }}" />
+    <input type="hidden" name="resource_id" value="{{ resource_id }}" />
+
+    <div class="field">
+      <label for="booking_type">Tip rezervare</label>
+      <select id="booking_type" name="booking_type">
+        <option value="orara">⏱ Pe interval orar</option>
+        <option value="zi">🗓 Zi întreagă (08:00 – 20:00)</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="date">Data rezervării</label>
+      <input type="date" id="date" name="date" value="2026-11-16" required />
+    </div>
+
+    <div class="form-row" id="hours-group">
+      <div class="field">
+        <label for="start_hour">Ora început</label>
+        <input type="time" id="start_hour" name="start_hour" value="10:00" />
+      </div>
+      <div class="field">
+        <label for="end_hour">Ora sfârșit</label>
+        <input type="time" id="end_hour" name="end_hour" value="12:00" />
+      </div>
+    </div>
+
+    <label class="tc-box">
+      <input type="checkbox" name="accepted_terms" required />
+      <span>
+        <strong>Termeni și condiții (obligatoriu):</strong> accept normele de securitate și integritate ale spațiilor și echipamentelor USV. Rezervarea se anulează automat în caz de neprezentare.
+      </span>
+    </label>
+
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <a href="{{ url_for('resources_catalog') }}" class="btn btn-ghost">Renunță</a>
+      <button type="submit" class="btn btn-primary">Trimite cererea</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
